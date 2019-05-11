@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -18,27 +20,38 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
-EditText text1,text2,text3,text4;
-Button button_save;
-Facility fa;
-DatabaseReference reff=FirebaseDatabase.getInstance().getReference().child("facilities");
+    EditText text1,text2,text3,text4;
+    Button button_save;
+    Facility fa;
+    DatabaseReference reff;
     public Context c=this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        reff=FirebaseDatabase.getInstance().getReference().child("facilities");
         text1=findViewById(R.id.text_1);
-        text2=findViewById(R.id.text_2);
         text3=findViewById(R.id.text_3);
         fa=new Facility();
         button_save=findViewById(R.id.button);
         reff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Object facility = dataSnapshot.getValue();
-                Log.d("FIRE", facility.toString());
+                LinearLayout ll=findViewById(R.id.mainL);
+                LinearLayout nll=new LinearLayout(c);
+                nll.setOrientation(LinearLayout.VERTICAL);
+                ll.addView(nll);
+                for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                    Facility facility = ds.getValue(Facility.class);
+                    TextView tt=new TextView(c);
+                    tt.setText(facility.name);
+                    nll.addView(tt);
+                }
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -87,7 +100,8 @@ DatabaseReference reff=FirebaseDatabase.getInstance().getReference().child("faci
 
 
                 reff.push().setValue(fa);
-
+                text1.setText("");
+                text3.setText("");
             }
         });
     }

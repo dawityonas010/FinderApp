@@ -33,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         reff=FirebaseDatabase.getInstance().getReference().child("facilities");
+        //reff.keepSynced(true);
         text1=findViewById(R.id.text_1);
         text3=findViewById(R.id.text_3);
         fa=new Facility();
